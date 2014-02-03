@@ -13,6 +13,8 @@ import metricGathering.XMLLogEntry.PathActionFile;
 
 public class BugHandling {
 
+	private final String commonFormat = "C:/Users/cauth0n/Documents/research/clio/commonFormat.csv";
+
 	private String sourceControlLog;
 	private String bugTicketLog;
 	private String tracTickets;
@@ -25,10 +27,26 @@ public class BugHandling {
 		xmlLogs = new ArrayList<>();
 		bugTickets = new ArrayList<>();
 		sourceFiles = new ArrayList<>();
-		mainLoop();
+
+		readInExistingData();
+
+		// Still need to:
+
+		getFileSize();
+
+		// commitLogAndBugLogParser();
+
 	}
 
-	public void mainLoop() {
+	public void readInExistingData() {
+		
+	}
+
+	public void getFileSize() {
+
+	}
+
+	public void commitLogAndBugLogParser() {
 		sourceControlLog = "C:/Users/cauth0n/Documents/research/clio/source control logs/svs7_all_asc formatted for data mining.log";
 		bugTicketLog = "C:/Users/cauth0n/Documents/research/clio/bug_tickets.csv";
 		tracTickets = "C:/Users/cauth0n/Documents/research/clio/track-ticket-dump.csv";
@@ -122,11 +140,11 @@ public class BugHandling {
 
 			getFileMetrics();
 
-			System.out.println("\n\n\nFinding Figure 2");
-			figure2();
+			// System.out.println("\n\n\nFinding Figure 2");
+			// figure2();
 
-			// System.out.println("\n\n\nPrinting to file...");
-			// printAll();
+			System.out.println("\n\n\nPrinting to file...");
+			printAll();
 
 			// two and output to file.
 
@@ -138,7 +156,7 @@ public class BugHandling {
 
 	private void getFileMetrics() {
 		String metricsFile7_0 = "C:/Users/cauth0n/Documents/research/clio/understand/svs7_7.0/svs7_7-0.csv";
-		String metricsFile7_1 = "";
+		String metricsFile7_1 = "C:/Users/cauth0n/Documents/research/clio/understand/svs7_7.0/svs7_7-0.csv";
 
 	}
 
@@ -170,7 +188,7 @@ public class BugHandling {
 				File f = new File(s);
 				PrintStream ps = new PrintStream(f);
 				for (int maxChanges = 0; maxChanges < 400; maxChanges++) {
-					if (release.get(maxChanges) == null){
+					if (release.get(maxChanges) == null) {
 						release.put(maxChanges, 0);
 					}
 					ps.println(maxChanges + ", " + release.get(maxChanges));
@@ -212,11 +230,12 @@ public class BugHandling {
 	private void printAll() {
 
 		try {
-			String s = "C:/Users/cauth0n/Documents/research/clio/change_ticketFrequency.csv";
+			String s = "C:/Users/cauth0n/Documents/research/clio/commonFormat.csv";
 			File f = new File(s);
 			PrintStream ps = new PrintStream(f);
+			ps.println("File, Release Number, File Size, Fan-in, Fan-out, Change Frequency, Ticket Frequency, Bug Change Frequency, Pair Change Frequency");
 			for (SourceFile sf : sourceFiles) {
-				ps.println(sf.getName() + ", " + sf.getChangeFrequency() + ", " + sf.getTicketFrequency());
+				ps.println(sf.toString());
 			}
 			ps.close();
 

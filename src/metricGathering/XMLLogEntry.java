@@ -107,7 +107,10 @@ public class XMLLogEntry {
 				String extension = file.substring(file.lastIndexOf("."));
 				if (extension.equals(".cpp") || extension.equals(".h") || extension.equals(".c")) {
 					int temp = releaseNumber;
-					commit.add(new PathActionFile(action, file, temp));
+					int extensionBegins = file.lastIndexOf(".");
+					String noExtension = file.substring(0, extensionBegins);
+					// commit.add(new PathActionFile(action, file, temp));
+					commit.add(new PathActionFile(action, noExtension, temp));
 				}
 			}
 
@@ -149,7 +152,7 @@ public class XMLLogEntry {
 			this.releaseNumber = 7;
 			break;
 		}
-		
+
 	}
 
 	public int getReleaseNumber() {
