@@ -87,25 +87,46 @@ public class SourceFile {
 
 	public String toString() {
 		String toRet = "";
-		String deliminater = ", ";
+		String deliminater = ",";
 
 		for (int i = 0; i < 8; i++) {
 			toRet += name;
 			toRet += deliminater;
-			toRet += (i + 1);
+			toRet += i;
 			toRet += deliminater;
+			if (fileSize.get(i) == null) {
+				fileSize.put(i, -99);
+			}
 			toRet += fileSize.get(i);
 			toRet += deliminater;
+			if (fanIn.get(i) == null) {
+				fanIn.put(i, -99);
+			}
 			toRet += fanIn.get(i);
 			toRet += deliminater;
+			if (fanOut.get(i) == null) {
+				fanOut.put(i, -99);
+			}
 			toRet += fanOut.get(i);
 			toRet += deliminater;
+			if (changeFrequency.get(i) == null) {
+				changeFrequency.put(i, -99);
+			}
 			toRet += changeFrequency.get(i);
 			toRet += deliminater;
+			if (ticketFrequency.get(i) == null) {
+				ticketFrequency.put(i, -99);
+			}
 			toRet += ticketFrequency.get(i);
 			toRet += deliminater;
+			if (bugChangeFrequency.get(i) == null) {
+				bugChangeFrequency.put(i, -99);
+			}
 			toRet += bugChangeFrequency.get(i);
 			toRet += deliminater;
+			if (pairChangeFrequency.get(i) == null) {
+				pairChangeFrequency.put(i, -99);
+			}
 			toRet += pairChangeFrequency.get(i);
 			toRet += "\n";
 		}

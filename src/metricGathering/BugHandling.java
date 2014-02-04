@@ -31,22 +31,75 @@ public class BugHandling {
 		readInExistingData();
 
 		// Still need to:
+		// get file size
+		// get fan-in
+		// get fan-out
+		// get bug change frequency
+		// get pair change frequency
+
+		// done with the following method
+		// if we need the data again, we can run it.
+		// commitLogAndBugLogParser();
 
 		getFileSize();
 
-		// commitLogAndBugLogParser();
-
 	}
 
-	public void readInExistingData() {
-		
+	private void readInExistingData() {
+		try {
+			Scanner input = new Scanner(new File(commonFormat));
+			String temp = input.nextLine();// first line is just a formatting
+											// helper for
+			// humans
+
+			String lagPointer = "";
+			while (input.hasNext()) {
+				String line = input.nextLine();
+				String splitter[] = line.split(",");
+
+				if (splitter[0].equals(lagPointer)) {
+					// the file we found already has a sourceFile object
+
+					for (SourceFile sf : sourceFiles) {
+						if (splitter[0].equals(sf.getName())) {
+							int releaseNum = Integer.parseInt(splitter[1]);
+							sf.addFileSize(releaseNum, Integer.parseInt(splitter[2]));
+							sf.addFanIn(releaseNum, Integer.parseInt(splitter[3]));
+							sf.addFanOut(releaseNum, Integer.parseInt(splitter[4]));
+							sf.addChangeFrequency(releaseNum, Integer.parseInt(splitter[5]));
+							sf.addTicketFrequency(releaseNum, Integer.parseInt(splitter[6]));
+							sf.addBugChangeFrequency(releaseNum, Integer.parseInt(splitter[7]));
+							sf.addPairChangeFrequency(releaseNum, Integer.parseInt(splitter[8]));
+						}
+					}
+
+				} else {
+					SourceFile sf = new SourceFile(splitter[0]);
+					int releaseNum = Integer.parseInt(splitter[1]);
+					sf.addFileSize(releaseNum, Integer.parseInt(splitter[2]));
+					sf.addFanIn(releaseNum, Integer.parseInt(splitter[3]));
+					sf.addFanOut(releaseNum, Integer.parseInt(splitter[4]));
+					sf.addChangeFrequency(releaseNum, Integer.parseInt(splitter[5]));
+					sf.addTicketFrequency(releaseNum, Integer.parseInt(splitter[6]));
+					sf.addBugChangeFrequency(releaseNum, Integer.parseInt(splitter[7]));
+					sf.addPairChangeFrequency(releaseNum, Integer.parseInt(splitter[8]));
+
+					sourceFiles.add(sf);
+					lagPointer = splitter[0];
+				}
+
+			}
+
+		} catch (FileNotFoundException e) {
+			System.out.println("Could not find existing data");
+			e.printStackTrace();
+		}
 	}
 
-	public void getFileSize() {
-
+	private void getFileSize() {
 	}
 
-	public void commitLogAndBugLogParser() {
+	private void commitLogAndBugLogParser() {
 		sourceControlLog = "C:/Users/cauth0n/Documents/research/clio/source control logs/svs7_all_asc formatted for data mining.log";
 		bugTicketLog = "C:/Users/cauth0n/Documents/research/clio/bug_tickets.csv";
 		tracTickets = "C:/Users/cauth0n/Documents/research/clio/track-ticket-dump.csv";
@@ -143,6 +196,20 @@ public class BugHandling {
 			// System.out.println("\n\n\nFinding Figure 2");
 			// figure2();
 
+			// fill in all null values with 0
+			for (SourceFile sf : sourceFiles) {
+				for (int i = 0; i < 8; i++) {
+					if (sf.getChangeFrequency().get(i) == null) {
+						sf.addChangeFrequency(i, new Integer(0));
+						// this file changed 0 times
+					}
+					if (sf.getTicketFrequency().get(i) == null) {
+						sf.addTicketFrequency(i, new Integer(0));
+						// this file had 0 bug tickets
+					}
+				}
+			}
+
 			System.out.println("\n\n\nPrinting to file...");
 			printAll();
 
@@ -155,8 +222,6 @@ public class BugHandling {
 	}
 
 	private void getFileMetrics() {
-		String metricsFile7_0 = "C:/Users/cauth0n/Documents/research/clio/understand/svs7_7.0/svs7_7-0.csv";
-		String metricsFile7_1 = "C:/Users/cauth0n/Documents/research/clio/understand/svs7_7.0/svs7_7-0.csv";
 
 	}
 
@@ -235,7 +300,7 @@ public class BugHandling {
 			PrintStream ps = new PrintStream(f);
 			ps.println("File, Release Number, File Size, Fan-in, Fan-out, Change Frequency, Ticket Frequency, Bug Change Frequency, Pair Change Frequency");
 			for (SourceFile sf : sourceFiles) {
-				ps.println(sf.toString());
+				ps.print(sf.toString());
 			}
 			ps.close();
 
