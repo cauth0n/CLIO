@@ -28,7 +28,10 @@ public class BugHandling {
 		bugTickets = new ArrayList<>();
 		sourceFiles = new ArrayList<>();
 
-		readInExistingData();
+		//CommitLogPreprocessor clp = new CommitLogPreprocessor();
+		
+		
+		// readInExistingData();
 
 		// Still need to:
 		// get file size
@@ -39,9 +42,11 @@ public class BugHandling {
 
 		// done with the following method
 		// if we need the data again, we can run it.
-		// commitLogAndBugLogParser();
+		 commitLogAndBugLogParser();
+		 //printAll();
 
-		getFileSize();
+		// getFileSize();
+		
 
 	}
 
@@ -100,7 +105,7 @@ public class BugHandling {
 	}
 
 	private void commitLogAndBugLogParser() {
-		sourceControlLog = "C:/Users/cauth0n/Documents/research/clio/source control logs/svs7_all_asc formatted for data mining.log";
+		sourceControlLog = "C:/Users/cauth0n/Documents/research/clio/clio tool/Clio-Organize/svs7_all_asc_edited_for_parsing.log";
 		bugTicketLog = "C:/Users/cauth0n/Documents/research/clio/bug_tickets.csv";
 		tracTickets = "C:/Users/cauth0n/Documents/research/clio/track-ticket-dump.csv";
 

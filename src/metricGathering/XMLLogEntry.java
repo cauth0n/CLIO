@@ -38,15 +38,15 @@ public class XMLLogEntry {
 		for (int i = 0; i < 2; i++) { // paths or msg can be flipped. So we only
 										// loop in this subsection twice.
 			String pathsOrMsg = input.nextLine();
-			if (pathsOrMsg.equals("<paths>")) {
+			if (pathsOrMsg.contains("<paths>")) {
 				String commit = input.nextLine();
-				while (!commit.equals("</paths>")) {
+				while (!commit.contains("</paths>")) {
 					assignCommit(commit);
 					commit = input.nextLine();
 				}
 			} else if (pathsOrMsg.contains("<msg>")) {
-				String msg = input.nextLine();
-				while (!msg.equals("</msg>")) {
+				String msg = pathsOrMsg;
+				while (!msg.contains("</msg>")) {
 					assignMessage(msg);
 					msg = input.nextLine();
 				}
@@ -105,7 +105,9 @@ public class XMLLogEntry {
 				// only consider .cpp and .h files
 				// I should consider using .c**, .h**, .c, etc files...
 				String extension = file.substring(file.lastIndexOf("."));
-				if (extension.equals(".cpp") || extension.equals(".h") || extension.equals(".c")) {
+				if (extension.equals(".unified")) {// this change is made
+													// because I unified all
+													// files.
 					int temp = releaseNumber;
 					int extensionBegins = file.lastIndexOf(".");
 					String noExtension = file.substring(0, extensionBegins);
