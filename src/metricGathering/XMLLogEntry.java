@@ -14,13 +14,14 @@ public class XMLLogEntry {
 	private List<Integer> bugTicketReferences;
 	private static int releaseNumber = 0;
 
-	private final int endRelease0 = 5660;
-	private final int endRelease1 = 5970;
-	private final int endRelease2 = 7341;
-	private final int endRelease3 = 9184;
-	private final int endRelease4 = 10717;
-	private final int endRelease5 = 12188;
-	private final int endRelease6 = 14429;
+	private final int beginRelease0 = 6;
+	private final int beginRelease1 = 5660;
+	private final int beginRelease2 = 5970;
+	private final int beginRelease3 = 7341;
+	private final int beginRelease4 = 9184;
+	private final int beginRelease5 = 10717;
+	private final int beginRelease6 = 12188;
+	private final int beginRelease7 = 14428;
 
 	public XMLLogEntry(StringBuilder logInfo) {
 		String log = logInfo.toString();
@@ -46,9 +47,11 @@ public class XMLLogEntry {
 				}
 			} else if (pathsOrMsg.contains("<msg>")) {
 				String msg = pathsOrMsg;
-				while (!msg.contains("</msg>")) {
+
+				while (!msg.equals("</msg>")) {
 					assignMessage(msg);
 					msg = input.nextLine();
+
 				}
 			} else {
 				// not a big deal if we get here. It just means a commit had no
@@ -66,7 +69,10 @@ public class XMLLogEntry {
 	private void assignMessage(String messageLine) {
 		message += messageLine;
 		if (messageLine.toLowerCase().contains("case") || messageLine.toLowerCase().contains("toqa")
-				|| messageLine.toLowerCase().contains("re #")) {
+				|| messageLine.toLowerCase().contains("re #") || messageLine.contains("#")
+				|| messageLine.toLowerCase().contains("to qa")) {
+
+			System.out.println(commitNumber);
 
 			String[] splitter = messageLine.split(" ");
 			for (String s : splitter) {
@@ -75,6 +81,7 @@ public class XMLLogEntry {
 					if (s.charAt(0) == '#') {
 						regex = s.substring(1);
 					}
+					System.out.println(commitNumber);
 					bugTicketReferences.add(Integer.parseInt(regex));
 				}
 			}
@@ -82,9 +89,18 @@ public class XMLLogEntry {
 	}
 
 	private void assignCommit(String commitLine) {
+
 		String[] splitter = commitLine.split("\"");
+
+		if (splitter[0].contains("copyfrom-path=")) {
+			splitter[1] = splitter[5];
+			splitter[2] = splitter[6];
+		} else if (splitter[2].contains("copyfrom-path=")) {
+			splitter[2] = splitter[6];
+		}
+
 		if (splitter[1].length() != 1) {
-			System.out.println("commit action is not a char." + commitNumber);
+			System.out.println("commit action is not a char. Commit number:" + commitNumber);
 		} else {
 			char action = splitter[1].charAt(0);
 			int endingIndex = splitter[2].indexOf("<");
@@ -132,26 +148,29 @@ public class XMLLogEntry {
 		commitNumber = Integer.parseInt(splitter[1]);
 
 		switch (commitNumber) {
-		case endRelease0:
+		case beginRelease0:
 			this.releaseNumber = 1;
 			break;
-		case endRelease1:
+		case beginRelease1:
 			this.releaseNumber = 2;
 			break;
-		case endRelease2:
+		case beginRelease2:
 			this.releaseNumber = 3;
 			break;
-		case endRelease3:
+		case beginRelease3:
 			this.releaseNumber = 4;
 			break;
-		case endRelease4:
+		case beginRelease4:
 			this.releaseNumber = 5;
 			break;
-		case endRelease5:
+		case beginRelease5:
 			this.releaseNumber = 6;
 			break;
-		case endRelease6:
+		case beginRelease6:
 			this.releaseNumber = 7;
+			break;
+		case beginRelease7:
+			this.releaseNumber = 8;
 			break;
 		}
 

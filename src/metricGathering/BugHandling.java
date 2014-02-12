@@ -3,6 +3,7 @@ package metricGathering;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,6 +13,8 @@ import java.util.Scanner;
 import metricGathering.XMLLogEntry.PathActionFile;
 
 public class BugHandling {
+
+	private final int releases = 9;
 
 	private final String commonFormat = "C:/Users/cauth0n/Documents/research/clio/commonFormat.csv";
 
@@ -28,10 +31,9 @@ public class BugHandling {
 		bugTickets = new ArrayList<>();
 		sourceFiles = new ArrayList<>();
 
-		//CommitLogPreprocessor clp = new CommitLogPreprocessor();
-		
-		
-		// readInExistingData();
+		// CommitLogPreprocessor clp = new CommitLogPreprocessor();
+
+		readInExistingData();
 
 		// Still need to:
 		// get file size
@@ -42,11 +44,64 @@ public class BugHandling {
 
 		// done with the following method
 		// if we need the data again, we can run it.
-		 commitLogAndBugLogParser();
-		 //printAll();
+		// commitLogAndBugLogParser();
 
 		// getFileSize();
-		
+
+		figure3();
+
+		// getFanInFanOut();
+
+	}
+
+	private void figure3() {
+		String outputter = "";
+		for (SourceFile sf : sourceFiles) {
+			if (sf.getChangeFrequency().get(8) != 0) {
+				// concerned only with future changed files
+				outputter += sf.getName() + "," + sf.getFanOut().get(7) + ", " + sf.getChangeFrequency().get(8) + "\n";
+			}
+		}
+		try {
+			File outFile = new File("C:/Users/cauth0n/Documents/research/clio/figure3.csv");
+			PrintWriter pw = new PrintWriter(outFile);
+
+			pw.print(outputter);
+
+			pw.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void getFanInFanOut() {
+		String defaultDir = "C:/Users/cauth0n/Documents/research/clio/understand/svs7_7-";
+		String defaultEnd = "MissingCommitFilesRemovedUnified.csv";
+
+		for (int i = 0; i < releases; i++) {
+			String filePointer = defaultDir + i + "/svs7_7-" + i + defaultEnd;
+			FanInFanout fifo = new FanInFanout(filePointer);
+			// a new object each iteration means fan-in/fan-out is unique for
+			// each version
+
+			Map<String, Integer> fanIn = fifo.getFanIn();
+			Map<String, Integer> fanOut = fifo.getFanOut();
+
+			for (SourceFile sf : sourceFiles) {
+				if (!fanIn.containsKey(sf.getName())) {
+					// that file is not included in the dep lists
+					fanIn.put(sf.getName(), 0);
+				}
+				if (!fanOut.containsKey(sf.getName())) {
+					// that file is not included in the dep lists
+					fanOut.put(sf.getName(), 0);
+				}
+
+				sf.getFanIn().put(i, fanIn.get(sf.getName()));
+				sf.getFanOut().put(i, fanOut.get(sf.getName()));
+			}
+		}
+		printAll();
 
 	}
 
@@ -69,12 +124,13 @@ public class BugHandling {
 						if (splitter[0].equals(sf.getName())) {
 							int releaseNum = Integer.parseInt(splitter[1]);
 							sf.addFileSize(releaseNum, Integer.parseInt(splitter[2]));
-							sf.addFanIn(releaseNum, Integer.parseInt(splitter[3]));
-							sf.addFanOut(releaseNum, Integer.parseInt(splitter[4]));
-							sf.addChangeFrequency(releaseNum, Integer.parseInt(splitter[5]));
-							sf.addTicketFrequency(releaseNum, Integer.parseInt(splitter[6]));
-							sf.addBugChangeFrequency(releaseNum, Integer.parseInt(splitter[7]));
-							sf.addPairChangeFrequency(releaseNum, Integer.parseInt(splitter[8]));
+							sf.addLOC(releaseNum, Integer.parseInt(splitter[3]));
+							sf.addFanIn(releaseNum, Integer.parseInt(splitter[4]));
+							sf.addFanOut(releaseNum, Integer.parseInt(splitter[5]));
+							sf.addChangeFrequency(releaseNum, Integer.parseInt(splitter[6]));
+							sf.addTicketFrequency(releaseNum, Integer.parseInt(splitter[7]));
+							sf.addBugChangeFrequency(releaseNum, Integer.parseInt(splitter[8]));
+							sf.addPairChangeFrequency(releaseNum, Integer.parseInt(splitter[9]));
 						}
 					}
 
@@ -82,12 +138,13 @@ public class BugHandling {
 					SourceFile sf = new SourceFile(splitter[0]);
 					int releaseNum = Integer.parseInt(splitter[1]);
 					sf.addFileSize(releaseNum, Integer.parseInt(splitter[2]));
-					sf.addFanIn(releaseNum, Integer.parseInt(splitter[3]));
-					sf.addFanOut(releaseNum, Integer.parseInt(splitter[4]));
-					sf.addChangeFrequency(releaseNum, Integer.parseInt(splitter[5]));
-					sf.addTicketFrequency(releaseNum, Integer.parseInt(splitter[6]));
-					sf.addBugChangeFrequency(releaseNum, Integer.parseInt(splitter[7]));
-					sf.addPairChangeFrequency(releaseNum, Integer.parseInt(splitter[8]));
+					sf.addLOC(releaseNum, Integer.parseInt(splitter[3]));
+					sf.addFanIn(releaseNum, Integer.parseInt(splitter[4]));
+					sf.addFanOut(releaseNum, Integer.parseInt(splitter[5]));
+					sf.addChangeFrequency(releaseNum, Integer.parseInt(splitter[6]));
+					sf.addTicketFrequency(releaseNum, Integer.parseInt(splitter[7]));
+					sf.addBugChangeFrequency(releaseNum, Integer.parseInt(splitter[8]));
+					sf.addPairChangeFrequency(releaseNum, Integer.parseInt(splitter[9]));
 
 					sourceFiles.add(sf);
 					lagPointer = splitter[0];
@@ -102,6 +159,24 @@ public class BugHandling {
 	}
 
 	private void getFileSize() {
+		String defaultDir = "C:/Users/cauth0n/Documents/research/clio/file size/svs7-7.";
+		String defaultEnd = ".txt";
+		for (int i = 0; i < 1; i++) {
+			String filePointer = defaultDir + i + defaultEnd;
+
+			FileSizeLOC fsl = new FileSizeLOC(filePointer);
+
+			for (SourceFile sf : sourceFiles) {
+				sf.getFileSize().put(i, fsl.getFileSize().get(sf.getName()));
+				sf.getLOC().put(i, fsl.getLoc().get(sf.getName()));
+				// perhaps consider putting a 'DNE' tag for files which do not
+				// have a size
+			}
+
+		}
+
+		printAll();
+
 	}
 
 	private void commitLogAndBugLogParser() {
@@ -196,14 +271,12 @@ public class BugHandling {
 			System.out.println("\n\n\nFinding ticket frequency...");
 			ticketFrequency();
 
-			getFileMetrics();
-
 			// System.out.println("\n\n\nFinding Figure 2");
 			// figure2();
 
 			// fill in all null values with 0
 			for (SourceFile sf : sourceFiles) {
-				for (int i = 0; i < 8; i++) {
+				for (int i = 0; i < releases; i++) {
 					if (sf.getChangeFrequency().get(i) == null) {
 						sf.addChangeFrequency(i, new Integer(0));
 						// this file changed 0 times
@@ -224,10 +297,6 @@ public class BugHandling {
 			System.out.println("Could not find file)");
 			e.printStackTrace();
 		}
-	}
-
-	private void getFileMetrics() {
-
 	}
 
 	private void figure2() {

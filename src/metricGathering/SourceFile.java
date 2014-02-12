@@ -7,6 +7,7 @@ public class SourceFile {
 
 	private String name;
 	private Map<Integer, Integer> fileSize;
+	private Map<Integer, Integer> loc;
 	private Map<Integer, Integer> fanIn;
 	private Map<Integer, Integer> fanOut;
 	private Map<Integer, Integer> changeFrequency;
@@ -17,6 +18,7 @@ public class SourceFile {
 	public SourceFile(String name) {
 		this.name = name;
 		fileSize = new HashMap<>();
+		loc = new HashMap<>();
 		fanIn = new HashMap<>();
 		fanOut = new HashMap<>();
 		changeFrequency = new HashMap<>();
@@ -27,6 +29,10 @@ public class SourceFile {
 
 	public void addFileSize(int key, int value) {
 		fileSize.put(key, value);
+	}
+
+	public void addLOC(int key, int value) {
+		loc.put(key, value);
 	}
 
 	public void addFanIn(int key, int value) {
@@ -85,11 +91,15 @@ public class SourceFile {
 		return pairChangeFrequency;
 	}
 
+	public Map<Integer, Integer> getLOC() {
+		return loc;
+	}
+
 	public String toString() {
 		String toRet = "";
 		String deliminater = ",";
 
-		for (int i = 0; i < 8; i++) {
+		for (int i = 0; i < 9; i++) {
 			toRet += name;
 			toRet += deliminater;
 			toRet += i;
@@ -99,6 +109,12 @@ public class SourceFile {
 			}
 			toRet += fileSize.get(i);
 			toRet += deliminater;
+			if (loc.get(i) == null) {
+				loc.put(i, -99);
+			}
+			toRet += loc.get(i);
+			toRet += deliminater;
+
 			if (fanIn.get(i) == null) {
 				fanIn.put(i, -99);
 			}

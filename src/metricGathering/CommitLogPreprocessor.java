@@ -15,27 +15,28 @@ public class CommitLogPreprocessor {
 	private final String release5FileDeps = "C:/Users/cauth0n/Documents/research/clio/understand/svs7_7-5/svs7_7-5_FileDependencies_simple.csv";
 	private final String release6FileDeps = "C:/Users/cauth0n/Documents/research/clio/understand/svs7_7-6/svs7_7-6_FileDependencies_simple.csv";
 	private final String release7FileDeps = "C:/Users/cauth0n/Documents/research/clio/understand/svs7_7-7/svs7_7-7_FileDependencies_simple.csv";
-	private final String releaseCurrentFileDeps = "C:/Users/cauth0n/Documents/research/clio/understand/svs7_7-current/svs7_7-current_FileDependencies_simple.csv";
+	private final String releaseCurrentFileDeps = "C:/Users/cauth0n/Documents/research/clio/understand/svs7_7-8/svs7_7-8_FileDependencies_simple.csv";
 
 	public CommitLogPreprocessor() {
 		String genericDirectory = "C:/Users/cauth0n/Documents/research/clio/understand/";
-		checkRevision(release0FileDeps, genericDirectory + "svs7_7.0/svs7_7-0MissingCommitFilesRemoved.csv");
+		String genericFileEnding = "MissingCommitFilesRemovedUnified.csv";
+		checkRevision(release0FileDeps, genericDirectory + "svs7_7.0/svs7_7-0" + genericFileEnding);
 		System.out.println("Done with release 0");
-		checkRevision(release1FileDeps, genericDirectory + "svs7_7-1/svs7_7-1MissingCommitFilesRemoved.csv");
+		checkRevision(release1FileDeps, genericDirectory + "svs7_7-1/svs7_7-1" + genericFileEnding);
 		System.out.println("Done with release 1");
-		checkRevision(release2FileDeps, genericDirectory + "svs7_7-2/svs7_7-2MissingCommitFilesRemoved.csv");
+		checkRevision(release2FileDeps, genericDirectory + "svs7_7-2/svs7_7-2" + genericFileEnding);
 		System.out.println("Done with release 2");
-		checkRevision(release3FileDeps, genericDirectory + "svs7_7-3/svs7_7-3MissingCommitFilesRemoved.csv");
+		checkRevision(release3FileDeps, genericDirectory + "svs7_7-3/svs7_7-3" + genericFileEnding);
 		System.out.println("Done with release 3");
-		checkRevision(release4FileDeps, genericDirectory + "svs7_7-4/svs7_7-4MissingCommitFilesRemoved.csv");
+		checkRevision(release4FileDeps, genericDirectory + "svs7_7-4/svs7_7-4" + genericFileEnding);
 		System.out.println("Done with release 4");
-		checkRevision(release5FileDeps, genericDirectory + "svs7_7-5/svs7_7-5MissingCommitFilesRemoved.csv");
+		checkRevision(release5FileDeps, genericDirectory + "svs7_7-5/svs7_7-5" + genericFileEnding);
 		System.out.println("Done with release 5");
-		checkRevision(release6FileDeps, genericDirectory + "svs7_7-6/svs7_7-6MissingCommitFilesRemoved.csv");
+		checkRevision(release6FileDeps, genericDirectory + "svs7_7-6/svs7_7-6" + genericFileEnding);
 		System.out.println("Done with release 6");
-		checkRevision(release7FileDeps, genericDirectory + "svs7_7-7/svs7_7-7MissingCommitFilesRemoved.csv");
+		checkRevision(release7FileDeps, genericDirectory + "svs7_7-7/svs7_7-7" + genericFileEnding);
 		System.out.println("Done with release 7");
-		checkRevision(releaseCurrentFileDeps, genericDirectory + "svs7_7-current/svs7_7-currentMissingCommitFilesRemoved.csv");
+		checkRevision(releaseCurrentFileDeps, genericDirectory + "svs7_7-current/svs7_7-8" + genericFileEnding);
 	}
 
 	private void checkRevision(String releaseFile, String outFile) {
@@ -116,7 +117,7 @@ public class CommitLogPreprocessor {
 					pw.append(line + "\n");
 
 				}
-
+				//
 				// if (!fromFileFound) {
 				// System.out.println(fromFile +
 				// " was not found in the commit logs");
