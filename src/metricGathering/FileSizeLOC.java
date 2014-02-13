@@ -53,8 +53,8 @@ public class FileSizeLOC {
 
 					break;
 				default:
-					System.out.println("Not a valid extension: "
-							+ sourceFile.substring(sourceFile.lastIndexOf(".") + 1));
+					// not a valid extension. This is fine, we just won't
+					// analyze the file.
 					break;
 				}
 

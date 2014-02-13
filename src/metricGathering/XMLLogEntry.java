@@ -11,7 +11,7 @@ public class XMLLogEntry {
 	private String date;
 	private List<PathActionFile> commit;
 	private String message;
-	private List<Integer> bugTicketReferences;
+	private List<Integer> ticketReferences;
 	private static int releaseNumber = 0;
 
 	private final int beginRelease0 = 6;
@@ -26,7 +26,7 @@ public class XMLLogEntry {
 	public XMLLogEntry(StringBuilder logInfo) {
 		String log = logInfo.toString();
 		commit = new ArrayList<>();
-		bugTicketReferences = new ArrayList<>();
+		ticketReferences = new ArrayList<>();
 		assignInfo(log);
 	}
 
@@ -72,8 +72,6 @@ public class XMLLogEntry {
 				|| messageLine.toLowerCase().contains("re #") || messageLine.contains("#")
 				|| messageLine.toLowerCase().contains("to qa")) {
 
-			System.out.println(commitNumber);
-
 			String[] splitter = messageLine.split(" ");
 			for (String s : splitter) {
 				if (s.matches("[#\\d]+")) {
@@ -81,8 +79,7 @@ public class XMLLogEntry {
 					if (s.charAt(0) == '#') {
 						regex = s.substring(1);
 					}
-					System.out.println(commitNumber);
-					bugTicketReferences.add(Integer.parseInt(regex));
+					ticketReferences.add(Integer.parseInt(regex));
 				}
 			}
 		}
@@ -198,7 +195,7 @@ public class XMLLogEntry {
 
 	public boolean hasBugReference() {
 		boolean toRet = false;
-		if (bugTicketReferences.isEmpty()) {
+		if (ticketReferences.isEmpty()) {
 			toRet = true;
 		}
 		return toRet;
@@ -208,8 +205,8 @@ public class XMLLogEntry {
 		return commit;
 	}
 
-	public List<Integer> getBugTicketReferences() {
-		return bugTicketReferences;
+	public List<Integer> getTicketReferences() {
+		return ticketReferences;
 	}
 
 	public class PathActionFile {

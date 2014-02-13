@@ -36,9 +36,6 @@ public class BugHandling {
 		readInExistingData();
 
 		// Still need to:
-		// get file size
-		// get fan-in
-		// get fan-out
 		// get bug change frequency
 		// get pair change frequency
 
@@ -48,10 +45,76 @@ public class BugHandling {
 
 		// getFileSize();
 
-		figure3();
+		// figure3();
 
 		// getFanInFanOut();
 
+		// printSevenAndEight();
+
+		printTotalsPerRelease();
+
+	}
+
+	private void printTotalsPerRelease() {
+		String delim = ",";
+		try {
+			File outFile = new File("C:/Users/cauth0n/Documents/research/clio/metrics across releases/metrics.csv");
+			PrintWriter pw = new PrintWriter(outFile);
+
+			for (int i = 0; i < releases; i++) {
+				int fileSize = 0;
+				int loc = 0;
+				int fanin = 0;
+				int fanout = 0;
+				int change = 0;
+				int tickets = 0;
+				int bugTick = 0;
+				for (SourceFile sf : sourceFiles) {
+					fileSize += sf.getFileSize().get(i);
+					loc += sf.getLOC().get(i);
+					fanin += sf.getFanIn().get(i);
+					fanout += sf.getFanOut().get(i);
+					change += sf.getChangeFrequency().get(i);
+					tickets += sf.getTicketFrequency().get(i);
+					bugTick += sf.getBugChangeFrequency().get(i);
+				}
+				String outputter = "Release " + i + delim + fileSize + delim + loc + delim + fanin + delim + fanout
+						+ delim + change + delim + tickets + delim + bugTick;
+				pw.println(outputter);
+			}
+
+			pw.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void printSevenAndEight() {
+		int r1 = 7;
+		int r2 = 8;
+		String outputter = "";
+		String delim = ",";
+		for (SourceFile sf : sourceFiles) {
+			outputter += sf.getName() + delim;
+			outputter += (sf.getFileSize().get(r1) + sf.getFileSize().get(r2)) + delim;
+			outputter += (sf.getFanIn().get(r1) + sf.getFanIn().get(r2)) + delim;
+			outputter += (sf.getFanOut().get(r1) + sf.getFanOut().get(r2)) + delim;
+			outputter += (sf.getChangeFrequency().get(r1) + sf.getChangeFrequency().get(r2)) + delim;
+			outputter += (sf.getTicketFrequency().get(r1) + sf.getTicketFrequency().get(r2)) + delim;
+			outputter += (sf.getBugChangeFrequency().get(r1) + sf.getBugChangeFrequency().get(r2)) + "\n";
+
+		}
+
+		try {
+			File outFile = new File("C:/Users/cauth0n/Documents/research/clio/table1.csv");
+			PrintWriter pw = new PrintWriter(outFile);
+
+			pw.print(outputter);
+
+			pw.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void figure3() {
@@ -161,7 +224,7 @@ public class BugHandling {
 	private void getFileSize() {
 		String defaultDir = "C:/Users/cauth0n/Documents/research/clio/file size/svs7-7.";
 		String defaultEnd = ".txt";
-		for (int i = 0; i < 1; i++) {
+		for (int i = 0; i < releases; i++) {
 			String filePointer = defaultDir + i + defaultEnd;
 
 			FileSizeLOC fsl = new FileSizeLOC(filePointer);
@@ -217,7 +280,6 @@ public class BugHandling {
 							}
 						}
 						if (!isFileAlreadyRecorded) {
-
 							sourceFiles.add(new SourceFile(file));
 						}
 					}
@@ -343,9 +405,12 @@ public class BugHandling {
 
 	private void ticketFrequency() {
 		for (XMLLogEntry log : xmlLogs) {
-			for (Integer i : log.getBugTicketReferences()) {
+			for (Integer i : log.getTicketReferences()) {
 				// this outside loop guarantees the ticket frequency per file
 				// will increase per bug ticket. In other words, we need it.
+
+				// I need to check here if the ticket references a bug, a
+				// feature, or unknown
 				for (PathActionFile paf : log.getFilesInCommit()) {
 					String fileName = paf.getFileName();
 					int releaseNumber = paf.getRelease();
@@ -420,21 +485,41 @@ public class BugHandling {
 		int totalFoundBugTickets = 0;
 
 		for (XMLLogEntry xmlEntry : xmlLogs) {
-			for (int caseNumber : xmlEntry.getBugTicketReferences()) {
+			for (int caseNumber : xmlEntry.getTicketReferences()) {
 				totalReferencedTickets++;
-				boolean foundCaseNumber = false;
+				boolean caseNumberIsABug = false;
 				for (BugTicketEntry bugTicket : bugTickets) {
 					if (caseNumber == bugTicket.getCaseNumber()) {
-						foundCaseNumber = true;
+						caseNumberIsABug = true;
 						totalFoundBugTickets++;
 						// output.add(new OutputEntry(xmlEntry, caseNumber));
 					}
 				}
-
-				if (!foundCaseNumber) {
-
+				if (!caseNumberIsABug) {
 					// the hg logs referenced a ticket that is not a bug.
 				}
+
+				for (PathActionFile paf : xmlEntry.getFilesInCommit()) {
+					for (SourceFile sf : sourceFiles) {
+						if (sf.getName().equals(paf.getFileName())) {
+							if (caseNumberIsABug) {
+								if (sf.getBugChangeFrequency().get(paf.getRelease()) == null) {
+									sf.getBugChangeFrequency().put(paf.getRelease(), new Integer(0));
+								}
+								int bugsAlreadyFound = sf.getBugChangeFrequency().get(paf.getRelease());
+								bugsAlreadyFound++;
+								sf.getBugChangeFrequency().put(paf.getRelease(), bugsAlreadyFound);
+							}
+							if (sf.getTicketFrequency().get(paf.getRelease()) == null) {
+								sf.getTicketFrequency().put(paf.getRelease(), new Integer(0));
+							}
+							int casesFound = sf.getTicketFrequency().get(paf.getRelease());
+							casesFound++;
+							sf.getTicketFrequency().put(paf.getRelease(), casesFound);
+						}
+					}
+				}
+
 			}
 		}
 
