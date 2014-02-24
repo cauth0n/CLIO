@@ -35,13 +35,18 @@ public class BugHandling {
 
 		readInExistingData();
 
+		// FaultyFileRecall ffr = new FaultyFileRecall(sourceFiles);
+
 		// Still need to:
-		// get bug change frequency
 		// get pair change frequency
 
 		// done with the following method
 		// if we need the data again, we can run it.
-		// commitLogAndBugLogParser();
+		commitLogAndBugLogParser();
+
+		readInExistingData();
+
+		figure4();
 
 		// getFileSize();
 
@@ -51,7 +56,39 @@ public class BugHandling {
 
 		// printSevenAndEight();
 
-		printTotalsPerRelease();
+		// printTotalsPerRelease();
+
+	}
+
+	private void figure4() {
+		String delim = ",";
+		FaultImpactRecall fir = new FaultImpactRecall(bugTickets, xmlLogs);
+		int release = 7;
+		try {
+			File outFile = new File("C:/Users/cauth0n/Documents/research/clio/figure4/figure4Values.csv");
+			PrintWriter pw = new PrintWriter(outFile);
+			String outputter = "File" + delim + "File size" + delim + "R7 Bug Changes" + delim + "Changes" + delim
+					+ "Bug Tickets" + delim + "Fan-out" + delim + "R7.5 Bug changes\n";
+
+			for (SourceFile sf : sourceFiles) {
+				if (sf.getFileSize().get(release) != 0 && sf.getBugChangeFrequency().get(release + 1) > 0) {
+
+					outputter += sf.getName() + delim;
+					outputter += sf.getFileSize().get(release) + delim;
+					outputter += sf.getBugChangeFrequency().get(release) + delim;
+					outputter += sf.getChangeFrequency().get(release) + delim;
+					outputter += sf.getBugChangeFrequency().get(release) + delim;
+					outputter += sf.getFanOut().get(release) + delim;
+					outputter += sf.getBugChangeFrequency().get(release + 1) + "\n";
+				}
+
+			}
+			pw.println(outputter);
+
+			pw.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 	}
 
@@ -350,8 +387,8 @@ public class BugHandling {
 				}
 			}
 
-			System.out.println("\n\n\nPrinting to file...");
-			printAll();
+			// System.out.println("\n\n\nPrinting to file...");
+			// printAll();
 
 			// two and output to file.
 
@@ -437,7 +474,7 @@ public class BugHandling {
 			String s = "C:/Users/cauth0n/Documents/research/clio/commonFormat.csv";
 			File f = new File(s);
 			PrintStream ps = new PrintStream(f);
-			ps.println("File, Release Number, File Size, Fan-in, Fan-out, Change Frequency, Ticket Frequency, Bug Change Frequency, Pair Change Frequency");
+			ps.println("File, Release Number, File Size, LOC, Fan-in, Fan-out, Change Frequency, Ticket Frequency, Bug Change Frequency, Pair Change Frequency");
 			for (SourceFile sf : sourceFiles) {
 				ps.print(sf.toString());
 			}

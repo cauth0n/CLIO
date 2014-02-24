@@ -14,7 +14,7 @@ public class XMLLogEntry {
 	private List<Integer> ticketReferences;
 	private static int releaseNumber = 0;
 
-	private final int beginRelease0 = 6;
+	private final int beginRelease0 = 0;
 	private final int beginRelease1 = 5660;
 	private final int beginRelease2 = 5970;
 	private final int beginRelease3 = 7341;
@@ -36,8 +36,11 @@ public class XMLLogEntry {
 		assignAuthor(input.nextLine());
 		assignDate(input.nextLine());
 
-		for (int i = 0; i < 2; i++) { // paths or msg can be flipped. So we only
-										// loop in this subsection twice.
+		for (int i = 0; i < 2; i++) { // paths or msg can be flipped in the svn
+										// logs. So we only
+										// loop in this subsection twice and use
+										// conditionals to figure out if a path
+										// or msg is currently found.
 			String pathsOrMsg = input.nextLine();
 			if (pathsOrMsg.contains("<paths>")) {
 				String commit = input.nextLine();
